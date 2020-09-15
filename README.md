@@ -45,7 +45,7 @@ bash script for running the orderly tasks in parallel.
 
 ### Compendium DOI:
 
-<http://dx.doi.org/xxxxxxx>
+<http://doi.org/10.5281/zenodo.4030018>
 
 The files at the URL above will generate the results as found in the
 publication. The files hosted at
