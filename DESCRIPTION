@@ -1,0 +1,41 @@
+Package: syriacovidascertainment
+Type: Package
+Title: Analysis of COVID-19 mortality in Damascus
+Version: 0.1.0
+Authors@R: c(
+  person("OJ", "Watson", email = "o.watson15@imperial.ac.uk", role = c("aut", "cre"))
+  )
+Description: Code repository for analysis into under-ascertainment of COVID-19 mortality in Damascus
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    orderly,
+    tidyr,
+    dplyr,
+    here,
+    pbapply,
+    squire (>= 0.4.23),
+    countrycode,
+    scales,
+    lubridate,
+    readxl,
+    dplyr,
+    gbm,
+    dismo,
+    tidyr,
+    conflicted ,
+    gtools,
+    stringi,
+    knitr
+    ggplot2
+    ggrepel
+    magrittr
+    rvest
+    xml2
+    grid
+    ggforce
+    cowplot
+    RhpcBLASctl
+Remotes:
+    mrc-ide/squire
