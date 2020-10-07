@@ -470,19 +470,20 @@ data_deaths <- data$deaths[match(deaths$date[all_model_pos], data$date)]
 # get likelihoods against the excess deaths
 ll_reported <- squire:::ll_nbinom(model = model_deaths,
                                   data = rep(reported$deaths, nrow(res$replicate_parameters)),
-                                  phi = 1, k = 1,
+                                  phi = 1, 
+                                  k = 2,
                                   exp_noise = res$pmcmc_results$inputs$pars_obs$exp_noise)
 
 ll_extra <- squire:::ll_nbinom(model = model_deaths,
                                data = rep(reported$extra_deaths, nrow(res$replicate_parameters)),
                                phi = 1,
-                               k = 1,
+                               k = 2,
                                exp_noise = res$pmcmc_results$inputs$pars_obs$exp_noise)
 
 ll_all <- squire:::ll_nbinom(model = all_model_deaths,
                              data = data_deaths,
                              phi = res$pmcmc_results$inputs$pars_obs$phi_death,
-                             k = 1,
+                             k = 2,
                              exp_noise = res$pmcmc_results$inputs$pars_obs$exp_noise)
 
 # how much do they appear within the "range"

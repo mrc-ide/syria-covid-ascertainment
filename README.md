@@ -4,8 +4,6 @@
 [![minimal R
 version](https://img.shields.io/badge/R%3E%3D-4.0.2-brightgreen.svg)](https://cran.r-project.org/)
 [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/)
-[![Travis-CI Build
-Status](https://travis-ci.org/mrc-ide/syria-covid-ascertainment.png?branch=master)](https://travis-ci.org/mrc-ide/syria-covid-ascertainment)
 
 ## Research compendium for COVID-19 reports in LMICs
 
@@ -45,7 +43,7 @@ bash script for running the orderly tasks in parallel.
 
 ### Compendium DOI:
 
-<http://dx.doi.org/xxxxxxx>
+<http://doi.org/10.5281/zenodo.4030018>
 
 The files at the URL above will generate the results as found in the
 publication. The files hosted at

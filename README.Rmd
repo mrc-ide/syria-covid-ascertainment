@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
 ```
 [![minimal R version](https://img.shields.io/badge/R%3E%3D-`r as.character(getRversion())`-brightgreen.svg)](https://cran.r-project.org/)
 [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) 
-[![Travis-CI Build Status](https://travis-ci.org/mrc-ide/syria-covid-ascertainment.png?branch=master)](https://travis-ci.org/mrc-ide/syria-covid-ascertainment) 
 
 ## Research compendium for COVID-19 ascertainment report in Damascus
 
@@ -54,7 +53,7 @@ The `src` directory contains the orderly tasks, which are used for much of the s
 
 ### Compendium DOI: 
  
-http://dx.doi.org/xxxxxxx
+http://doi.org/10.5281/zenodo.4030018
 
 The files at the URL above will generate the results as found in the publication. The files hosted at github.com/mrc-ide/syria-covid-ascertainment are the development versions and may have changed since the report was published
 
