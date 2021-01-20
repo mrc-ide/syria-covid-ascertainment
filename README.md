@@ -2,10 +2,10 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 [![minimal R
-version](https://img.shields.io/badge/R%3E%3D-4.0.2-brightgreen.svg)](https://cran.r-project.org/)
+version](https://img.shields.io/badge/R%3E%3D-4.0.3-brightgreen.svg)](https://cran.r-project.org/)
 [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/)
 
-## Research compendium for COVID-19 reports in LMICs
+## Research compendium for COVID-19 ascertainment report in Damascus
 
 This is a working R compendium (think R package but for reproducible
 analysis). The analysis directory contains R scripts used to generate
@@ -77,12 +77,12 @@ installed on your computer):
 git clone https://github.com/mrc-ide/syria-covid-ascertainment.git
 ```
 
-Once the download is complete, open the `syriaascertainment.Rproj` in
-RStudio to begin working with the package and compendium files. We will
-endeavour to keep all package dependencies required listed in the
+Once the download is complete, open the `syriacovidascertainment.Rproj`
+in RStudio to begin working with the package and compendium files. We
+will endeavour to keep all package dependencies required listed in the
 DESCRIPTION. This has the advantage of allowing
-`devtools::install_dev_deps()` to install the required R packages needed
-to run the code in this repository
+`devtools::install_deps(".", upgrade = "never")` to install the required
+R packages needed to run the code in this repository
 
 ### Licenses
 

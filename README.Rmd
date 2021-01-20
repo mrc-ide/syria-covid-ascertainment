@@ -14,17 +14,18 @@ knitr::opts_chunk$set(
 ```
 [![minimal R version](https://img.shields.io/badge/R%3E%3D-`r as.character(getRversion())`-brightgreen.svg)](https://cran.r-project.org/)
 [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) 
+[![Travis-CI Build Status](https://travis-ci.org/mrc-ide/global-lmic-meffs.png?branch=master)](https://travis-ci.org/mrc-ide/global-lmic-meffs) 
 
-## Research compendium for COVID-19 ascertainment report in Damascus
+## Research compendium for COVID-19 under-ascertainment in Damascus
 
 This is a working R compendium (think R package but for reproducible analysis). The analysis directory contains R scripts used to generate the results. 
 
 ### Installation
 
 ```
-git clone https://github.com/mrc-ide/syria-covid-ascertainment.git
-cd syria-covid-ascertainment
-open syriaascertainment.Rproj
+git clone https://github.com/mrc-ide/syria-underascertainment.git
+cd syria-underascertainment
+open globalmicmeffs.Rproj
 devtools::install_deps()
 ```
 
@@ -35,31 +36,35 @@ The structure within analysis is as follows:
 ```
 analysis/
     |
-    ├── analysis.R            # analysis script
-    ├── wafiat.R              # script used in wafiat analysis
+    ├── 01_xxxxx /           # analysis scripts used for generating figures
     |
-    ├── 02_09 /               # analysis outputs run for 2nd September
-    ├── wafiat_analysis /     # analysis outputs for wafiat analysis
-    |
-    ├── graphics/             # figures generated via graphics
+    ├── figures/              # location of figures produced by the analysis scripts
     |
     ├── data/
     │   ├── DO-NOT-EDIT-ANY-FILES-IN-HERE-BY-HAND
-    │   ├── raw/       # data obtained from elsewhere
-    │   └── derived/   # data generated during the analysis
+    │   ├── raw_data/       # data obtained from elsewhere
+    │   └── derived_data/   # data generated during the analysis
 ```
 
-The `src` directory contains the orderly tasks, which are used for much of the simulation work with `squire`. The `run` directory contains a bash script for running the orderly tasks in parallel. 
+The raw data is generated from the following `orderly` repository [https://github.com/mrc-ide/global-lmic-reports-orderly](https://github.com/mrc-ide/global-lmic-reports-orderly). The results are pushed from the server where this orderly task is run to this repository for downstream analysis. This process removes the extra files (css, html templates etc) needed to make the website on which this analysis is based [https://mrc-ide.github.io/global-lmic-reports/](https://mrc-ide.github.io/global-lmic-reports/). 
 
 ### Compendium DOI: 
  
-http://doi.org/10.5281/zenodo.4030018
+http://dx.doi.org/xxxxxxx
 
-The files at the URL above will generate the results as found in the publication. The files hosted at github.com/mrc-ide/syria-covid-ascertainment are the development versions and may have changed since the report was published
+The files at the URL above will generate the results as found in the publication. The files hosted at github.com/mrc-ide/global-lmic-meffs are the development versions and may have changed since the report was published
 
 ### Overview of contents
 
-This repository is our research compendium for our analysis of [https://mrc-ide.github.io/syria-covid-ascertainment/](https://mrc-ide.github.io/syria-covid-ascertainment/). The compendium contains all data, code, and text associated with the publication. The `R` files in the `analysis` directory contain details of how all the analyses reported in the paper were conducted, as well as instructions on how to rerun the analysis to reproduce the results. The `data/` directory in the `analysis/` directory contains all the raw and derived data generated. 
+This repository is our research compendium for our analysis of [https://mrc-ide.github.io/global-lmic-reports/](https://mrc-ide.github.io/global-lmic-reports/). The compendium contains all data, code, and text associated with the publication. The `Rmd` files in the `analysis/paper/` directory contain details of how all the analyses reported in the paper were conducted, as well as instructions on how to rerun the analysis to reproduce the results. The `data/` directory in the `analysis/` directory contains all the raw data. 
+
+### The supplementary files
+
+The `analysis/` directory contains:
+
+- all the data files (in csv or rds format, in the `data/` directory)    
+- all analysis R scripts (in the `01_xxxx` directories)
+- all the figures that are included in the paper (in the `figures/` directory)
 
 ### The R package 
 
@@ -68,10 +73,10 @@ This repository is organized as an R package. There are no/negligable R function
 To download the package source as you see it on GitHub, for offline browsing, use this line at the shell prompt (assuming you have Git installed on your computer):
 
 ```{r eval=FALSE}
-git clone https://github.com/mrc-ide/syria-covid-ascertainment.git
+git clone https://github.com/mrc-ide/global-lmic-meffs.git
 ```
 
-Once the download is complete, open the `syriacovidascertainment.Rproj` in RStudio to begin working with the package and compendium files. We will endeavour to keep all package dependencies required listed in the DESCRIPTION. This has the advantage of allowing `devtools::install_dev_deps()` to install the required R packages needed to run the code in this repository
+Once the download is complete, open the `globallmicmeffs.Rproj` in RStudio to begin working with the package and compendium files. We will endeavour to keep all package dependencies required listed in the DESCRIPTION. This has the advantage of allowing `devtools::install_dev_deps()` to install the required R packages needed to run the code in this repository
 
 ### Licenses
 

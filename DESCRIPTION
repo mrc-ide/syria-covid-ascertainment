@@ -15,7 +15,7 @@ Imports:
     dplyr,
     here,
     pbapply,
-    squire (>= 0.4.23),
+    squire (>= 0.4.34),
     countrycode,
     scales,
     lubridate,
@@ -24,7 +24,7 @@ Imports:
     gbm,
     dismo,
     tidyr,
-    conflicted ,
+    conflicted,
     gtools,
     stringi,
     knitr
@@ -38,4 +38,5 @@ Imports:
     cowplot
     RhpcBLASctl
 Remotes:
-    mrc-ide/squire
+    mrc-ide/squire@v0.4.34,
+    mrc-ide/odin@531a28

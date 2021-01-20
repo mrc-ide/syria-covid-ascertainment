@@ -17,7 +17,10 @@ for(i in seq_along(rgs)){
   Sys.sleep(5)
 }
 
-
+# N.B. This apporach used in the initial wafiat analysis did not work in the later
+# analysis as Facebook changed what information is encoded in a webpage so it was
+# not possible to scrape the date. It is left as is for posterity but the approach
+# used in the wafiat_revision analysis that uses a Selenium server will work.
 time_from_url <- function(file = NULL, url = NULL) {
 
   if (is.null(file)) {
@@ -192,6 +195,6 @@ df_t <- df_t[-which(df_t$src %in% basename(get_rid)),]
 
 # save the results
 saveRDS(df_t, file.path(here::here(), "analysis/wafiat_analysis/08_09/wafiat_df.rds"))
-write.csv(df_t, file.path(here::here(), "analysis/data/supp_table_7.csv"))
+write.csv(df_t, file.path(here::here(), "analysis/data/raw/supp_table_7.csv"))
 
 

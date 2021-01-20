@@ -139,6 +139,7 @@ resources:
   - google_brt.rds
   - death_sheet.xlsx
   - certs_deaths_july.rds
+  - certs_deaths_january.rds
 
 global_resources:
 

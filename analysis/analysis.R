@@ -6,7 +6,7 @@ library(scales)
 
 
 version_min <- "0.4.34"
-if(packageVersion("squire") < version_min) {
+if(packageVersion("squire") != version_min) {
   stop("squire needs to be updated to at least ", version_min)
 }
 
@@ -169,7 +169,7 @@ date_0 <- "2020-09-02"
 sheet <- readxl::read_xlsx(file.path(here::here(), "analysis/data/raw/supp_table_4.xlsx"))
 
 # Formatting sheet for plotting
-daily_df <- sheet %>% pivot_longer(Damascus:Hama, names_to = "region", values_to = "deaths") %>%
+daily_df <- sheet %>% pivot_longer(Damascus:Latakia, names_to = "region", values_to = "deaths") %>%
   select(Date, region, deaths) %>%
   mutate(date = as.Date(Date),
          governorate = region,
@@ -179,9 +179,9 @@ daily_df$Date <- as.Date(daily_df$Date)
 daily_df <- filter(daily_df, Date <= date_0)
 
 # Get ACAPs
-download_url <- function(url) {
+download_url <- function(url, ext = "") {
   tryCatch({
-    tf <- tempfile()
+    tf <- tempfile(fileext = ext)
     code <- download.file(url, tf, mode = "wb")
     if (code != 0) {
       stop("Error downloading file")
@@ -196,8 +196,8 @@ download_url <- function(url) {
 acap_site <- "http://www.acaps.org/covid19-government-measures-dataset"
 xml <- xml2::read_html(acap_site)
 url <- rvest::html_attr(rvest::html_nodes(xml, ".file a"), "href")
-acap_tf <- download_url(url)
-acap <- readxl::read_excel(acap_tf, progress = FALSE, sheet = "Database")
+acap_tf <- download_url(url, ".xlsx")
+acap <- readxl::read_excel(acap_tf, progress = FALSE, sheet = 2)
 acap_missing <- readxl::read_excel(file.path(here::here(), "analysis/data/raw/acaps_missing.xlsx"), progress = FALSE)
 acap <- rbind(acap, acap_missing)
 
@@ -206,6 +206,7 @@ acap$ISO <- countrycode::countrycode(acap$COUNTRY, "country.name", "iso3c",
                                      custom_match = c("Eswatini"="SWZ", "Micronesia"="FSM"))
 acap_syr <- acap %>% filter(ISO == "SYR") %>% arrange_at("DATE_IMPLEMENTED")
 write_tsv(acap_syr, file.path(here::here(), "analysis/data/raw/supp_table_5.csv"))
+acap_syr <- read.csv(file.path(here::here(), "analysis/data/raw/supp_table_5.csv"), sep = "\t")
 
 # load in the brt model used
 brt <- readRDS(file.path(here::here(), "analysis/data/derived/02_09/brt.rds"))
@@ -213,7 +214,10 @@ brt <- readRDS(file.path(here::here(), "analysis/data/derived/02_09/brt.rds"))
 # Plot
 fig1 <- ggplot(daily_df, aes(as.Date(Date), deaths, fill = region)) +
   geom_vline(aes(xintercept = as.Date(DATE_IMPLEMENTED)), data = acap_syr, linetype = "solid", lwd = 0.2, color = "grey") +
-  geom_line(aes(x = date, y = C*4.8), brt$SYR %>% filter(date>as.Date("2020-03-08") & date<as.Date(date_0)),
+  geom_hline(aes(yintercept = 5.15), lwd = 0, color = "grey") +
+  geom_point(aes(x = date, y = 5.1), data = brt$SYR[which(diff(brt$SYR$C)>0)+1,], color = "orange", inherit.aes = FALSE) +
+  geom_point(aes(x = date, y = 5.1), data = brt$SYR[which(diff(brt$SYR$C)<0)+1,], color = "purple", inherit.aes = FALSE) +
+  geom_step(aes(x = date, y = C*4.8), brt$SYR %>% filter(date>as.Date("2020-03-08") & date<as.Date(date_0)),
             inherit.aes = FALSE, lwd = 1.5, color = "#CA3433") +
   geom_bar(stat="identity", fill = "black", color = NA, width = 1) +
   geom_bar(aes(fill=region), stat = "identity", width = 1) +
@@ -269,7 +273,7 @@ fig2b <- ll %>% pivot_longer(cols = ll_reported:ll_extra) %>%
   scale_color_manual(name = "Reporting Fraction",
                      values = viridis::plasma(12)) +
   ylab("Log Likelihood") +
-  xlab("% Deaths Reported")
+  xlab("% COVID-19 Deaths Reported")
 
 # ------------------------------------------------
 ## FIGURE 2a Visual Representation
@@ -329,7 +333,7 @@ fig2a <- gg1 + geom_bar(aes(x=date, y=deaths), data = data,  color = "black", fi
                      values = viridis::plasma(12),
                      guide = guide_legend(reverse = TRUE)) +
   xlab("") +
-  ylab("Daily Deaths in Damascus\n") +
+  ylab("Daily COVID-19 Deaths in Damascus\n") +
   guides(linetype = FALSE) +
   scale_x_date(limits = c(min(data$date)-1,max(data$date)+1), expand = c(0,0)) +
   scale_y_continuous(limits = c(0,200)) +
@@ -386,7 +390,31 @@ fig_save("fig2", fig2, width = 8, height = 8)
 # get the best fiting simulation from the default parameter run
 maintain_4months <- res[[which(unlist(lapply(res, function(x) {x$pmcmc_results$inputs$pars_obs$phi_death})) == default_params$reporting_fraction[1])]]
 
-overview_plot <- function(maintain_4months, date_0) {
+overview_plot <- function(maintain_4months, date_0, date_end = NULL) {
+
+  if(is.null(date_end)) {
+    date_end <- tail(rownames(maintain_4months$output),1)
+  }
+  date_end <- as.Date(date_end)
+
+  ## Damascus death sources
+  ## https://www.facebook.com/damascusgovrnorat/posts/191862302286989
+  reported <- data.frame("date" = seq.Date(as.Date("2020-07-25"), as.Date("2020-08-01"),1),
+                         "deaths" = c(78, 88, 87, 108, 133, 127, 104, 107))
+
+  # https://aliqtisadi.com/790464-%D9%8A%D9%88%D8%AC%D8%AF-%D9%81%D9%8A-%D8%AF%D9%85%D8%B4%D9%82-%D8%B3%D8%AA-%D9%85%D9%82%D8%A7%D8%A8%D8%B1/
+  reported$deaths_low <- reported$deaths - 50
+  reported$deaths_high <- reported$deaths - 15
+
+  # https://www.facebook.com/MEENALMASOOL/photos/a.1277434595713288/3039607002829363/?type=3 - 25 deaths/day
+  # CBS Statistical Abstract 2019 | 11725 deaths in 2018. 32 deaths/day
+  reported$deaths <- reported$deaths -32
+
+  ## Let's also compare to an assumption that there is even more excess mortlaity than historic due to secondary pressure on health systems
+  reported$extra_deaths <- reported$deaths - 32
+  reported$extra_deaths_low <- reported$deaths_low - 32
+  reported$extra_deaths_high <- reported$deaths_high - 32
+
 
   data <- maintain_4months$pmcmc_results$input$data
 
@@ -407,7 +435,8 @@ ar_plot <- squire::format_output(maintain_4months, "S", date_0 = date_0) %>%
   theme_bw() + ylab("Attack Rate") +
   theme(axis.title.x = element_blank(), legend.position = "none",
         panel.grid.minor.y = element_blank()) +
-  scale_x_date(date_breaks = "2 month", date_labels = "%b")
+  scale_x_date(date_breaks = "2 month", date_labels = "%b",
+               limits = c(as.Date(rownames(maintain_4months$output)[1]),date_end))
 
 infections <- plot(maintain_4months, "infections", date_0 = date_0, x_var = "date", summary_f = median) +
   theme_bw() + ylab("Daily Infections") + theme(legend.position = "none") +
@@ -415,7 +444,8 @@ infections <- plot(maintain_4months, "infections", date_0 = date_0, x_var = "dat
   scale_fill_viridis_d(option = "cividis") +
   scale_color_viridis_d(option = "cividis") +
   theme(axis.title.x = element_blank(), panel.grid.minor.y = element_blank()) +
-  scale_x_date(date_breaks = "2 month", date_labels = "%b")
+  scale_x_date(date_breaks = "2 month", date_labels = "%b",
+               limits = c(as.Date(rownames(maintain_4months$output)[1]),date_end))
 
 deaths_forecast <- plot(maintain_4months, "deaths", date_0 = date_0, x_var = "date", summary_f = median) +
   theme_bw() + ylab("Daily Deaths") + theme(legend.position = "none") +
@@ -427,7 +457,8 @@ deaths_forecast <- plot(maintain_4months, "deaths", date_0 = date_0, x_var = "da
   geom_bar(aes(x = date, y = deaths), data = data, stat = "identity") +
   geom_vline(xintercept = as.Date(date_0), linetype = "dashed") +
   theme(axis.title.x = element_blank(), panel.grid.minor.y = element_blank()) +
-  scale_x_date(date_breaks = "2 month", date_labels = "%b")
+  scale_x_date(date_breaks = "2 month", date_labels = "%b",
+               limits = c(as.Date(rownames(maintain_4months$output)[1]),date_end))
 
 healthcare_forecast <- plot(maintain_4months, "hospital_occupancy", date_0 = date_0, x_var = "date", summary_f = median)+
   theme_bw() + ylab("Hospital Occupacy") + theme(legend.position = "none") +
@@ -436,7 +467,8 @@ healthcare_forecast <- plot(maintain_4months, "hospital_occupancy", date_0 = dat
   geom_hline(yintercept = maintain_4months$parameters$hosp_bed_capacity, linetype = "dotted") +
   geom_vline(xintercept = as.Date(date_0), linetype = "dashed") +
   theme(axis.title.x = element_blank(), panel.grid.minor.y = element_blank()) +
-  scale_x_date(date_breaks = "2 month", date_labels = "%b")
+  scale_x_date(date_breaks = "2 month", date_labels = "%b",
+               limits = c(as.Date(rownames(maintain_4months$output)[1]),date_end))
 
 fig3 <- cowplot::plot_grid(
   cowplot::plot_grid(deaths_forecast, NA, infections, healthcare_forecast, NA, ar_plot, labels = c("a","","b","c","","d"), ncol = 3, rel_widths = c(1,0.01,1)),
@@ -444,8 +476,8 @@ fig3 <- cowplot::plot_grid(
 return(fig3)
 }
 
-fig3 <- overview_plot(maintain_4months, date_0)
-fig_save("fig3", fig3, width = 8, height = 8)
+fig3 <- overview_plot(maintain_4months, date_0, "2020-12-02")
+fig_save("fig3", fig3, width = 8, height = 6)
 
 ## Numbers for manuscript
 
@@ -650,7 +682,7 @@ df_t <- readRDS(file.path(here::here(), "analysis/wafiat_analysis/08_09/wafiat_d
 df_t <- df_t %>% filter(certificate == TRUE, date <= "2020-09-02", date > "2015-12-31")
 
 fig5a <- ggplot(df_t, aes(year_month_dated)) + geom_bar(stat = "count") + theme_bw() +
-  ylab("Death certificates \nuploaded per month\n") +
+  ylab("Death notifications \nuploaded per month\n") +
   xlab("") +
   geom_hline(yintercept = 1200, lwd = 0) +
   scale_x_date(date_breaks = "6 months", date_labels = "%b '%y") +
@@ -662,7 +694,7 @@ fig5a <- ggplot(df_t, aes(year_month_dated)) + geom_bar(stat = "count") + theme_
 
 
 fig5b <- ggplot(df_t %>% filter(date > "2020-01-01"), aes(date)) + geom_bar(stat = "count") + theme_bw() +
-  ylab("Death certificates \nuploaded per day\n") +
+  ylab("Death notifications \nuploaded per day\n") +
   xlab("") +
   scale_x_date(date_breaks = "1 month", date_labels = "%b '%y") +
   geom_hline(yintercept = 120, lwd = 0) +
@@ -728,7 +760,7 @@ fig5c <- draws %>% group_by(date) %>%
                 alpha = 0.4) +
   geom_line(aes(y = weekly), color = viridis::cividis(1), lwd = 1.5)  +
   theme_bw() +
-  ylab("Excess Deaths estmated \nfrom certificates\n") +
+  ylab("Excess Deaths estmated \nfrom notifications\n") +
   xlab("") +
   scale_x_date(date_breaks = "1 month", date_labels = "%b '%y") +
   ggpubr::theme_pubclean(base_size = 14) +
@@ -878,7 +910,7 @@ plot_certs <- function(cert_runs) {
     ylab("Excess Deaths\n") +
     geom_vline(xintercept = as.Date(date_0), linetype = "dashed") +
     viridis::scale_fill_viridis(discrete = TRUE,begin = 0.2, end = 0.8, direction = -1, option = "D",
-                                name = "% of Total COVID-19 Deaths Ascertained \nFrom Excess Death Certificates:\n") +
+                                name = "% of Total COVID-19 Deaths Ascertained \nFrom Excess Death Notifications:\n") +
     theme(legend.position = "top") +
     guides(fill = guide_legend(title.position = "top")) +
     theme(axis.line.y = element_line(),
