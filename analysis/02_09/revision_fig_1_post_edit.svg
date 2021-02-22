@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -45,8 +45,8 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:zoom="1.0104167"
-     inkscape:cx="490.19386"
-     inkscape:cy="369.14443"
+     inkscape:cx="505.90738"
+     inkscape:cy="308.0429"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -16582,4 +16582,30 @@
        y="83.314964"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.70740795px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26769155"
        id="tspan9638">of Initial Analysis</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:18.74593163px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.46864828"
+     x="3.0519106"
+     y="18.128811"
+     id="text3575"
+     inkscape:export-xdpi="299.98999"
+     inkscape:export-ydpi="299.98999"><tspan
+       sodipodi:role="line"
+       id="tspan3573"
+       x="3.0519106"
+       y="18.128811"
+       style="stroke-width:0.46864828">a)</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:18.74593163px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.46864825"
+     x="2.6491663"
+     y="258.33344"
+     id="text3575-1"
+     inkscape:export-xdpi="299.98999"
+     inkscape:export-ydpi="299.98999"><tspan
+       sodipodi:role="line"
+       id="tspan3573-0"
+       x="2.6491663"
+       y="258.33344"
+       style="stroke-width:0.46864825">b)</tspan></text>
 </svg>
